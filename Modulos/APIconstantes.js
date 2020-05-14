@@ -38,6 +38,14 @@ module.exports = {
         }
        return mensaje;
     },
+    paramNotFound: function(){
+        var mensaje = {
+            error: true,
+            codigo: 200,
+            mensaje: 'Param not found'
+        }
+        return mensaje;
+    },
     candidateAdded: function(){
         var mensaje = 
         {
