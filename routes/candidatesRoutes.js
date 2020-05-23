@@ -1,5 +1,5 @@
 //Librerias 
-const controllerUsers    = require('../controllers/USERS');
+const controllerUsers    = require('../controllers/CANDIDATES');
 const responses          = require('../Modulos/APIconstantes');
 const auth               = require('../base_de_datos/Autenticar');
  
@@ -14,10 +14,10 @@ module.exports = function(app){
         res.send(responses.invalid());
       }
     });
-   app.get('/searchCandidate/:id', async (req,res) =>{
+   app.get('/searchCandidate', async (req,res) =>{
       try{
          await auth.token(req)
-         var user = await controllerUsers.searchOne(req.params.id)
+         var user = await controllerUsers.searchOne(req.query.id)
          if(!user){
           res.send(responses.candidateNoFound())
          }else{
@@ -27,7 +27,7 @@ module.exports = function(app){
         res.send(responses.invalid());
        }
    });
-   app.post('/addCandidate/', async (req,res) =>{
+   app.post('/addCandidate', async (req,res) =>{
     try{
        await auth.token(req)
        var result;

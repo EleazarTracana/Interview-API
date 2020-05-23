@@ -14,9 +14,17 @@ module.exports = {
         var base   =  await this.conexion();
         return base.db('INTERVIEW').collection('POOLS');
     },
+    users: async function tecnology() {
+        var base   =  await this.conexion();
+        return base.db('INTERVIEW').collection('USERS');
+    },
     results: async function results(){
         var base   =  await this.conexion();
         return base.db('INTERVIEW').collection('RESULTS');
+    },
+    params: async function search(){
+        var base = await this.conexion();
+        return base.db('INTERVIEW').collection("PARAMS");
     }
 }
 

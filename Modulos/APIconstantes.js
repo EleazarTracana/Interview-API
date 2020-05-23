@@ -5,7 +5,7 @@ module.exports = {
         var mensaje = 
         {
             error: true,
-            codigo: 403,
+            codigo: "403",
             mensaje: 'invalid token'
            }
         return mensaje; 
@@ -14,7 +14,7 @@ module.exports = {
         var mensaje = 
         {
             error: true,
-            codigo: 500,
+            codigo: "500",
             mensaje: 'an error has ocurred'
 
         }
@@ -24,7 +24,7 @@ module.exports = {
         var mensaje = 
         {
             error: true,
-            codigo: 404,
+            codigo: "404",
             mensaje: 'candidate not found'
            }
         return mensaje; 
@@ -33,16 +33,24 @@ module.exports = {
         var mensaje = 
         {
             error: true,
-            codigo: 500,
+            codigo: "500",
             mensaje: 'candidate cannot by added. Already Exist'
         }
        return mensaje;
+    },
+    paramNotFound: function(){
+        var mensaje = {
+            error: true,
+            codigo: "200",
+            mensaje: 'Param not found'
+        }
+        return mensaje;
     },
     candidateAdded: function(){
         var mensaje = 
         {
             error: false,
-            codigo: 200,
+            codigo: "200",
             mensaje: 'your candidate has been added successfully'
            }
         return mensaje; 
@@ -51,7 +59,7 @@ module.exports = {
         var mensaje =  {
 
             error: true,
-            codigo: 404,
+            codigo: "404",
             mensaje: 'El usuario no se encuentra resgistrado en la base'
        }
        return mensaje;
@@ -59,7 +67,7 @@ module.exports = {
     incorrect: function(){
         var mensaje =  {
             error: true,
-            codigo: 403,
+            codigo: "403",
             mensaje: 'user/password incorrect'
        }
        return mensaje
@@ -67,7 +75,7 @@ module.exports = {
     validated: function(token){
         var mensaje ={
             error:false,
-            condigo:200,
+            condigo:"200",
             mensaje: 'your token has been created!',
             token: token
         }
