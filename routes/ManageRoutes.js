@@ -46,5 +46,6 @@ module.exports = function(app){
          console.log(e);
          res.send(constantes.invalid());
        }
-     })
-  };
+     });
+    }
+
