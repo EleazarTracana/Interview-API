@@ -1,6 +1,6 @@
 //Librerias 
 const controllerUsers    = require('../controllers/CANDIDATES');
-const responses          = require('../Modulos/APIconstantes');
+const responses          = require('../Modulos/constantes');
 const auth               = require('../base_de_datos/Autenticar');
  
 module.exports = function(app){
@@ -11,7 +11,7 @@ module.exports = function(app){
           var users = await controllerUsers.searchAll()
           res.send(users);
       }catch (e){
-        res.send(responses.invalid());
+        res.send(responses.invalid);
       }
     });
    app.get('/searchCandidate', async (req,res) =>{
@@ -19,12 +19,12 @@ module.exports = function(app){
          await auth.token(req)
          var user = await controllerUsers.searchOne(req.query.id)
          if(!user){
-          res.send(responses.candidateNoFound())
+          res.send(responses.candidateNoFound)
          }else{
           res.send(user);
          }
       }catch{
-        res.send(responses.invalid());
+         res.status(403).send(responses.invalid);
        }
    });
    app.post('/addCandidate', async (req,res) =>{
@@ -35,16 +35,16 @@ module.exports = function(app){
        if(!user){
           var added = await controllerUsers.addCandidate(req.body)
           if(added){
-            result = responses.candidateAdded();
+            result = responses.candidateAdded;
           }else{
-            result = responses.genericError();
+            result = responses.genericError;
           }
        }else{
-          result = responses.candidateExist();  
+          result = responses.candidateExist;  
        }
        res.send(result);
     }catch{
-      res.send(responses.invalid());
+      res.status(403).send(responses.invalid);
      }
    });
    app.delete('/deleteCandidate',async(req,res)=>{
@@ -55,11 +55,11 @@ module.exports = function(app){
       if(user){
          result = await controllerUsers.deleteCandidate(req.body.id);
       }else{
-         result = responses.candidateNoFound();  
+         result = responses.candidateNoFound;  
       }
       res.send(result);
    }catch{
-     res.send(responses.invalid());
+      res.status(403).send(responses.invalid);
     }
    });
    app.post('/updateCandidate',async(req, res) =>{
@@ -70,11 +70,11 @@ module.exports = function(app){
       if(user){
          result = await controllerUsers.updateCandidate(req.body);
       }else{
-         result = responses.candidateNoFound();  
+         result = responses.candidateNoFound;  
       }
       res.send(result);
     }catch{
-     res.send(responses.invalid());
+     res.status(403).send(responses.invalid);
     }
    });
 }

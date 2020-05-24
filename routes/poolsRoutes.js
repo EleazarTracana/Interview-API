@@ -1,6 +1,6 @@
 //Librerias 
 const controllerPools    = require('../controllers/POOLS');
-const responses          = require('../Modulos/APIconstantes');
+const responses          = require('../Modulos/constantes');
 const auth               = require('../base_de_datos/Autenticar');
  
 module.exports = function(app){
@@ -11,7 +11,7 @@ module.exports = function(app){
         var tecnologies = await controllerPools.tecnologies()
         res.send(tecnologies);
     }catch{
-      res.send(responses.invalid());
+      res.send(responses.invalid);
     }
   });
   app.get('/pools', async (req,res) =>{
@@ -39,7 +39,7 @@ module.exports = function(app){
         res.send(array);
       }
     }catch{
-      res.status(403).send(responses.invalid());
+      res.status(403).send(responses.invalid);
     }
   });
 }

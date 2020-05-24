@@ -1,7 +1,7 @@
 //Librerias 
 const auth               = require('../base_de_datos/Autenticar');
 const param              = require('../controllers/MANAGE.js');
-const constantes         = require('../Modulos/APIconstantes.js')
+const constantes         = require('../Modulos/constantes.js')
  
 module.exports = function(app){
     
@@ -17,18 +17,17 @@ module.exports = function(app){
        res.send(params);
       }catch(e){
         console.log(e);
-        res.send(constantes.invalid());
+        res.send(constantes.invalid);
       }
     });
    app.post('/validate',async (req,res) => {
       try{ 
         await auth.token(req);
         var newtoken = await auth.verifyTokenUser(req.body.user,req.body.token);
-        console.log("token armado: " + newtoken);
         res.send(newtoken);
        }catch(e){
          console.log(e);
-         res.send(constantes.invalid());
+         res.send(constantes.invalid);
        }
      }),
      app.post('/createtoken',async (req,res) => {
@@ -44,7 +43,7 @@ module.exports = function(app){
         res.json(json);
        }catch(e){
          console.log(e);
-         res.send(constantes.invalid());
+         res.send(constantes.invalid);
        }
      });
     }

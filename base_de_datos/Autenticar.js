@@ -1,4 +1,4 @@
-const responses = require('../Modulos/APIconstantes');
+const responses = require('../Modulos/constantes');
 const jwt           = require('jsonwebtoken');
 const config        = require('../config');
 
