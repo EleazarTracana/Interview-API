@@ -7,16 +7,32 @@ module.exports = function(app){
     
   app.get('/allUsers',async (req,res) => {
       try{
-          await auth.token(req)
+          await auth.token(req);
           var users = await controllerUsers.searchAll()
           res.send(users);
       }catch (e){
         res.send(responses.invalid);
       }
     });
+   app.get('/adminFill', async(req,res)=>{
+      try{
+         await auth.token(req);
+         var users = await controllerUsers.searchAll();
+         var counter = 0;
+         for(var _user in users){
+            if(_user.rol == "Administrador"){
+               counter++;
+            }
+         }
+         
+      }catch(e){
+         res.send(responses.invalid);
+      }
+   })
    app.get('/searchUser', async (req,res) =>{
       try{
          await auth.token(req)
+         console.log("token autenticado");
          var user = await controllerUsers.searchOne(req.query.username)
          if(user === 'undefined' || user == null){
             res.send(responses.candidateNoFound)
@@ -30,8 +46,10 @@ module.exports = function(app){
    app.post('/addUser', async (req,res) =>{
     try{
        await auth.token(req)
+       console.log("token autenticado");
        var result;
        var user = await controllerUsers.searchOne(req.body.username)
+       console.log(user)
        if(user == null || user === 'undefined'){
           var added = await controllerUsers.addUser(req.body)
           if(added){
@@ -43,8 +61,9 @@ module.exports = function(app){
           result = responses.candidateExist;  
        }
        res.send(result);
-    }catch{
-      res.send(responses.invalid);
+    }catch  (e){
+       console.log(e);
+      res.send(e);
      }
    });
    app.delete('/deleteUser',async(req,res)=>{

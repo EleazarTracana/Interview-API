@@ -12,6 +12,8 @@ module.exports = {
     },
     addUser: async function add(user){
         var users = await client.users();
+        var nextVal = await client.getNextSequence("userid");
+        user._id = nextVal;
         var resultado  = await users.insertOne(user);
         return resultado;
     },

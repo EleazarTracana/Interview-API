@@ -5,6 +5,10 @@ module.exports = {
         client = await MongoClient.connect(url, { useUnifiedTopology: true });
         return client;
     },
+    counters : async function candidates(){
+        var base   =  await this.conexion() ;
+        return base.db('INTERVIEW').collection('COUNTERS');
+    },
     candidates : async function candidates(){
         var base   =  await this.conexion() ;
         return base.db('INTERVIEW').collection('CANDIDATES');
@@ -24,6 +28,17 @@ module.exports = {
     params: async function search(){
         var base = await this.conexion();
         return base.db('INTERVIEW').collection("PARAMS");
+    },
+    getNextSequence: async function NextSequence(name){
+        var db =  await this.counters();
+            var ret = db.findAndModify(
+                   {
+                     query: { _id: name },
+                     update: { $inc: { seq: 1 } },
+                     new: true
+                   }
+            );
+            return ret.seq;
     }
 }
 
