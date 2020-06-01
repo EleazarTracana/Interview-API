@@ -1,4 +1,5 @@
 var client = require('../base_de_datos/Cliente')
+var userController = require('../controllers/USERS')
 
 module.exports = {
    tecnologies: async function search() {
