@@ -1,5 +1,6 @@
 //Librerias 
 const controllerUsers    = require('../controllers/CANDIDATES');
+const controllerResult   = require('../controllers/RESULTS');
 const responses          = require('../Modulos/constantes');
 const auth               = require('../base_de_datos/Autenticar');
  
@@ -27,18 +28,15 @@ module.exports = function(app){
          res.status(403).send(responses.invalid);
        }
    });
-   app.post('/addCandidate', async (req,res) =>{
+   app.post('/candidate/add', async (req,res) =>{
     try{
        await auth.token(req)
-       var result;
-       var user = await controllerUsers.searchOne(req.body.id)
-       if(!user){
-          var added = await controllerUsers.addCandidate(req.body)
-          if(added){
-            result = responses.candidateAdded;
-          }else{
-            result = responses.genericError;
-          }
+       var result_callback;
+       var candidate = await controllerUsers.searchOne(req.body._id)
+       if(!candidate){
+             await controllerUsers.addCandidate(req.body)
+             await controllerResult.create_default_results(req.body._id,req.body.technolgy);
+             result_callback = responses.candidateAdded;
        }else{
           result = responses.candidateExist;  
        }

@@ -1,5 +1,18 @@
-var client = require('../base_de_datos/Cliente')
-var candidate_functions = require('../controllers/CANDIDATES');
+var client = require('../base_de_datos/Cliente'),
+    candidate_functions = require('../controllers/CANDIDATES'),
+    factory             = require('../Modulos/models')
+
+module.exports= {
+    create_default_results: async (dni,technology) => {
+        var results_db = await client.results(),
+            next_pk = await client.getNextSequence("resultsid"),
+            empty_array = [],
+            candidate_results = factory.Results(dni,technology,empty_array,next_pk);
+            
+        let callback =  await results_db.insertOne(candidate_results);
+        return callback;
+    }
+}
 
 /*faltaria el metodo que actualiza el resultado del usuario y probar y modificar
 el metodo gext_next_question a tu gusto*/
