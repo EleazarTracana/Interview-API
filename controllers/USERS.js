@@ -11,9 +11,9 @@ module.exports = {
         return usuarios;
     },
     addUser: async function add(user){
-        var users = await client.users();
-        var nextVal = await client.getNextSequence("userid");
-        user._id = nextVal;
+        var users   = await client.users(),
+            nextPk = await client.getNextSequence("userid");
+        user._id = nextPk;
         var resultado  = await users.insertOne(user);
         return resultado;
     },

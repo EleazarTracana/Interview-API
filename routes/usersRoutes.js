@@ -1,39 +1,37 @@
 //Librerias 
-const controllerUsers    = require('../controllers/USERS');
-const responses          = require('../Modulos/constantes');
-const auth               = require('../base_de_datos/Autenticar');
+const controller_users    = require('../controllers/USERS');
+const responses           = require('../Modulos/constantes');
+const auth                = require('../base_de_datos/Autenticar');
  
 module.exports = function(app){
     
-  app.get('/allUsers',async (req,res) => {
+  app.get('/user/all',async (req,res) => {
       try{
           await auth.token(req);
-          var users = await controllerUsers.searchAll()
+          var users = await controller_users.searchAll()
           res.send(users);
       }catch (e){
         res.send(responses.invalid);
       }
     });
-   app.get('/adminFill', async(req,res)=>{
+   app.get('/admins/check', async(req,res)=>{
       try{
          await auth.token(req);
-         var users = await controllerUsers.searchAll();
+         var users = await controller_users.searchAll();
          var counter = 0;
          for(var _user in users){
             if(_user.rol == "Administrador"){
                counter++;
             }
          }
-         
       }catch(e){
          res.send(responses.invalid);
       }
    })
-   app.get('/searchUser', async (req,res) =>{
+   app.get('/user/search', async (req,res) =>{
       try{
          await auth.token(req)
-         console.log("token autenticado");
-         var user = await controllerUsers.searchOne(req.query.username)
+         var user = await controller_users.searchOne(req.query.username)
          if(user === 'undefined' || user == null){
             res.send(responses.candidateNoFound)
            }else{
@@ -43,15 +41,13 @@ module.exports = function(app){
         res.send(JSON.stringify(responses.invalid.toString()));
        }
    });
-   app.post('/addUser', async (req,res) =>{
+   app.post('/user/add', async (req,res) =>{
     try{
        await auth.token(req)
-       console.log("token autenticado");
        var result;
-       var user = await controllerUsers.searchOne(req.body.username)
-       console.log(user)
+       var user = await controller_users.searchOne(req.body.username);
        if(user == null || user === 'undefined'){
-          var added = await controllerUsers.addUser(req.body)
+          var added = await controller_users.addUser(req.body)
           if(added){
             result = responses.candidateAdded;
           }else{
@@ -66,13 +62,13 @@ module.exports = function(app){
       res.send(e);
      }
    });
-   app.delete('/deleteUser',async(req,res)=>{
+   app.delete('/user/delete',async(req,res)=>{
     try{
       await auth.token(req)
       var result;
-      var user = await controllerUsers.searchOne(req.body.username)
+      var user = await controller_users.searchOne(req.body.username)
       if(user){
-         result = await controllerUsers.deleteUser(req.body.id);
+         result = await controller_users.deleteUser(req.body.id);
       }else{
          result = responses.candidateNoFound;  
       }
