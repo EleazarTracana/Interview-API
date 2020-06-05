@@ -1,6 +1,6 @@
 //Librerias 
 const auth               = require('../base_de_datos/Autenticar');
-const param              = require('../controllers/MANAGE.js');
+const controller              = require('../controllers/MANAGE.js');
 const constantes         = require('../Modulos/constantes.js')
  
 module.exports = function(app){
@@ -9,10 +9,19 @@ module.exports = function(app){
        var resultado = await auth.validate(req.body.name,req.body.password);
        res.send(resultado);
   });
+  app.post('/email/test', async(req,res) => {
+    try{
+        await auth.token(req);
+        let sender = await controller.sendEmail(req.body.email);
+        res.send(sender)
+      }catch(error){
+        res.send("error")
+      }
+  });
   app.get('/param',async (req,res) => {
      try{ 
        await auth.token(req);
-       var params = await param.GetAll();
+       var params = await controller.GetAll();
        res.status(200).send(params);
       }catch(e){
         res.send(constantes.invalid);
