@@ -9,13 +9,13 @@ module.exports = function(app){
        var resultado = await auth.validate(req.body.name,req.body.password);
        res.send(resultado);
   });
-  app.post('/email/test', async(req,res) => {
+  app.post('/email/credentials', async(req,res) => {
     try{
         await auth.token(req);
-        let sender = await controller.sendEmail(req.body.email);
+        let sender = await controller.sendEmail_credentials(req.body.email,req.body.username,req.body.password);
         res.send(sender)
       }catch(error){
-        res.send("error")
+        res.send(error)
       }
   });
   app.get('/param',async (req,res) => {

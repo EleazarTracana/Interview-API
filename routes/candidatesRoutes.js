@@ -35,7 +35,7 @@ module.exports = function(app){
        var candidate = await controllerUsers.searchOne(req.body._id)
        if(!candidate){
              await controllerUsers.addCandidate(req.body)
-             await controllerResult.create_default_results(req.body._id,req.body.technolgy);
+             await controllerResult.create_default_results(req.body._id,req.body.technology);
              result_callback = responses.candidateAdded;
        }else{
           result = responses.candidateExist;  
