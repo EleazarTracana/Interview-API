@@ -9,8 +9,8 @@ module.exports = {
     candidateExist:   new message(true, "403", 'Candidate cannot by added. Already Exist'),
     paramNotFound:    new message(true, "404", 'Param not found'),
     candidateAdded:   new message(false,"200", 'Your candidate has been added successfully'),
-    userNotFound:     new message(true, "404", 'User not found'),
-    incorrect:        new message(true, "403", 'User/password incorrect'),
+    userNotFound:     new message(true, "404", 'Usuario no encontrado'),
+    incorrect:        new message(true, "403", 'Usuario/Contrasena Invalida'),
     validated(token){
         return new message(false,"200",token)
     }

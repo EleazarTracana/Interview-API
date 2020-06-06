@@ -15,18 +15,13 @@ module.exports = function(app){
       }
     });
    app.get('/admins/check', async(req,res)=>{
-      try{
-         await auth.token(req);
          var users = await controller_users.searchAll();
          var counter = 0;
          for(var _user in users){
-            if(_user.rol == "Administrador"){
+            if(_user.rolname.equals("Administrador"))
                counter++;
-            }
          }
-      }catch(e){
-         res.send(responses.invalid);
-      }
+         return (counter >= 2);
    })
    app.get('/user/search', async (req,res) =>{
       try{

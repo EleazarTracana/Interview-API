@@ -1,6 +1,7 @@
-const responses = require('../Modulos/constantes');
+const responses     = require('../Modulos/constantes');
 const jwt           = require('jsonwebtoken');
 const config        = require('../config');
+const client = require('../base_de_datos/Cliente');
 
 module.exports = {
     createtoken: function create(){
@@ -8,35 +9,19 @@ module.exports = {
         var token  = jwt.sign({Seguridad:secure},config.secret)
         return token;
     },
-    createTokenUser: function usertoken(user){
-      console.log(user.toString())
-      var token = jwt.sign({Seguridad: user},config.secret,{
-        expiresIn: '15m',
-      });
-      return token;
-    },
-    verifyTokenUser: async function verifytoken(user,token){
-      var newToken = { 
-        token:token,
-        user:user,
-        expired:true
-      }
-      var verified = await jwt.verify(token, config.secret);
-      if(verified){
-         newToken = { 
-          token:this.createTokenUser(user),
-          user:user,
-          expired:false
-        }
-      }
-      return newToken;
-    },
-    validate: async function validate(name,password){
-        var result;
-        if(name == "root" && password == "#Eyx1421P"){
-          result = responses.validated(this.createtoken());
+    validate: async function validate(_username,password){ 
+        var users_db = await client.users(),
+            user     = await users_db.findOne({username: _username}),
+            result;
+        if(user == null){
+              result = responses.userNotFound
         }else{
-          result = responses.incorrect()
+           if(user.password == password){
+             user.token = this.createtoken();
+             result = user;
+           }else{
+             result = responses.incorrect;
+           }
         }
         return result;
     },
