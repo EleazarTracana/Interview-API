@@ -31,6 +31,10 @@ module.exports = {
         var base = await this.conexion();
         return base.db('INTERVIEW').collection("PARAMS");
     },
+    permisos: async function search(){
+        var base = await this.conexion();
+        return base.db('INTERVIEW').collection("PERMISOS");
+    },
     getNextSequence: async function NextSequence(name){
         var db =  await this.counters();
                   await db.updateOne(

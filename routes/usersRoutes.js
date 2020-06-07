@@ -41,7 +41,7 @@ module.exports = function(app){
        await auth.token(req)
        var result;
        var user = await controller_users.searchOne(req.body.username);
-       if(user == null || user === 'undefined'){
+       if(user == null){
           var added = await controller_users.addUser(req.body)
           if(added){
             result = responses.candidateAdded;

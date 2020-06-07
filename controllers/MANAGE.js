@@ -36,6 +36,17 @@ module.exports = {
             params = allparams.find({}).toArray();
         return params;
      },
+     all_permissions: async function(){
+        var permissions_db  = await client.permisos(),
+            all_permissions = await permissions_db.find({}).toArray(),
+            names           = [];
+
+            all_permissions.forEach(permiso => {
+                names.push(permiso.name);
+            });
+
+            return names;
+     },
      sendEmail_credentials: async (email_receiver,username,password) =>{
 
         var transporter = await create_email(),

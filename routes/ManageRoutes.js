@@ -18,6 +18,16 @@ module.exports = function(app){
         res.send(error)
       }
   });
+  app.get('/permissions/all',async (req,res) => {
+      try{
+        await auth.token(req);
+        let names = await controller.all_permissions();
+        res.send(names)
+      }catch(e){
+        res.send(constantes.invalid);
+      }
+        
+  });
   app.get('/param',async (req,res) => {
      try{ 
        await auth.token(req);
