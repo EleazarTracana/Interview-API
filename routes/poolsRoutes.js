@@ -5,10 +5,10 @@ const auth               = require('../base_de_datos/Autenticar');
  
 module.exports = function(app){
     
-  app.get('/tecnologies',async (req,res) => {
+  app.get('/tecnologies/dropdown',async (req,res) => {
     try{
         await auth.token(req)
-        var tecnologies = await controllerPools.tecnologies()
+        var tecnologies = await controllerPools.technologies_dropdown_list()
         res.send(tecnologies);
     }catch{
       res.send(responses.invalid);

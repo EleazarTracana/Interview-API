@@ -2,14 +2,14 @@ var client = require('../base_de_datos/Cliente.js')
 const nodemailer = require("nodemailer");
 const fs = require('fs');
 
- function read_html_credentials(username,password){
+
+function read_html_credentials(username,password){
    var credentials =  fs.readFileSync('C:/InterviewAPI/templates/credenciales.html', 'utf8');
        credentials = credentials.replace('PH_USERNAME',username)
                                 .replace('PH_PASSWORD',password);
 
         return credentials;
 }
-
 async function create_email() {
    var params = await client.params();
        _email    = await params.findOne({ parameter_name: "EMAIL_ACCOUNT"}),
