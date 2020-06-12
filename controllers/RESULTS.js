@@ -1,8 +1,9 @@
 var client = require('../base_de_datos/Cliente'),
     candidate_functions = require('../controllers/CANDIDATES'),
+    user_functions      = require('../controllers/USERS'),
     results             = require('../Modulos/models').results
 
-module.exports= {
+module.exports = {
     create_default_results: async (dni,technology) => {
         var results_db = await client.results(),
             next_pk = await client.getNextSequence("resultsid"),
@@ -11,7 +12,24 @@ module.exports= {
             
         let callback =  await results_db.insertOne(candidate_results);
         return callback;
-    }
+    },
+    update_results: async (candidate, pregunta) => {
+      // buscar en el collection results el resultado del candidato
+      // insertar la preguntas en ese modelo (push a la prop results)
+      // actualizarlo
+      //var candidate = user_functions.searchOne({id: candidate._id});
+      var results   = await client.results();
+      var result    = await results.findOne({candidate_id: candidate._id});
+      result.results.push(pregunta);
+      return await results.updateOne({candidate_id: candidate._id});
+    },
+    addUser: async function add(user){
+      var users   = await client.users(),
+          nextPk = await client.getNextSequence("userid");
+      user._id = nextPk;
+      var resultado  = await users.insertOne(user);
+      return resultado;
+  },
 }
 
 /*faltaria el metodo que actualiza el resultado del usuario y probar y modificar

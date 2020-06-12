@@ -75,4 +75,14 @@ module.exports = function(app){
      res.status(403).send(responses.invalid);
     }
    });
+   app.post('/updateResults',async(req, res) =>{
+      try{
+        await auth.token(req)
+        var result = await controllerResult.update_results(req.body.candidate, req.body.question)
+        
+        res.send(responses.resultAdded);
+      }catch{
+       res.status(403).send(responses.invalid);
+      }
+     });
 }
