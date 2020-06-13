@@ -54,6 +54,12 @@ module.exports = {
                  html: body, 
           });
           return info;
+     },
+     google_places_key: async() =>{
+         var params = await client.params(),
+             key    = params.findOne({parameter_name:"API_PLACES_KEY"});
+             return key.parameter_value;
+
      }
     
 }
