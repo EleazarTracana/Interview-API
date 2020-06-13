@@ -2,12 +2,17 @@ var client = require('../base_de_datos/Cliente')
 var userController = require('../controllers/USERS')
 
 module.exports = {
-   tecnologies: async function search() {
-      var list = [];
-      var tecnologies = await client.tecnologies();
-      var pools    = await tecnologies.find({}).toArray();
+   technologies_dropdown_list: async function search() {
+      var list = [],
+          technologies = await client.tecnologies(),
+          pools       = await technologies.find({}).toArray();
       pools.forEach(pool => {list.push(pool.technology)});
-      return  list;
+
+      let uniqueArray = list.filter(function(elem, pos) {
+         return list.indexOf(elem) == pos;
+     })
+     uniqueArray.push("otra");
+   return uniqueArray;
    },
    poolsAll:async function search(name){
       var CollectionPools = await client.tecnologies();

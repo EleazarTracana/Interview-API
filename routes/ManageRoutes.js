@@ -1,7 +1,8 @@
 //Librerias 
 const auth               = require('../base_de_datos/Autenticar');
 const controller         = require('../controllers/MANAGE.js');
-const constantes         = require('../Modulos/constantes.js')
+const constantes         = require('../Modulos/constantes.js');
+const { response } = require('express');
  
 module.exports = function(app){
     
@@ -18,6 +19,15 @@ module.exports = function(app){
         res.send(error)
       }
   });
+  app.get('/param/google-places-key',async(req,res)=>{
+    try{
+      await auth.token(req);
+      let api_value = await controller.google_places_key();
+      res.status(200).send(api_value);
+    }catch(e){
+      res.status(403).send(constantes.invalid);
+    }
+  });
   app.get('/permissions/all',async (req,res) => {
       try{
         await auth.token(req);
@@ -28,14 +38,5 @@ module.exports = function(app){
       }
         
   });
-  app.get('/param',async (req,res) => {
-     try{ 
-       await auth.token(req);
-       var params = await controller.GetAll();
-       res.status(200).send(params);
-      }catch(e){
-        res.send(constantes.invalid);
-      }
-    });
-    }
+}
 

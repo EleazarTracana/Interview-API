@@ -2,14 +2,14 @@ var client = require('../base_de_datos/Cliente.js')
 const nodemailer = require("nodemailer");
 const fs = require('fs');
 
- function read_html_credentials(username,password){
+
+function read_html_credentials(username,password){
    var credentials =  fs.readFileSync('C:/InterviewAPI/templates/credenciales.html', 'utf8');
        credentials = credentials.replace('PH_USERNAME',username)
                                 .replace('PH_PASSWORD',password);
 
         return credentials;
 }
-
 async function create_email() {
    var params = await client.params();
        _email    = await params.findOne({ parameter_name: "EMAIL_ACCOUNT"}),
@@ -38,14 +38,8 @@ module.exports = {
      },
      all_permissions: async function(){
         var permissions_db  = await client.permisos(),
-            all_permissions = await permissions_db.find({}).toArray(),
-            names           = [];
-
-            all_permissions.forEach(permiso => {
-                names.push(permiso.name);
-            });
-
-            return names;
+            all_permissions = await permissions_db.find({}).toArray();
+            return all_permissions;
      },
      sendEmail_credentials: async (email_receiver,username,password) =>{
 
@@ -60,6 +54,12 @@ module.exports = {
                  html: body, 
           });
           return info;
+     },
+     google_places_key: async() =>{
+         var params = await client.params(),
+             key    = await params.findOne({parameter_name:"API_PLACES_KEY"});
+             return key;
+
      }
     
 }

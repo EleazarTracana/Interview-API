@@ -38,12 +38,28 @@ module.exports = function(app){
              await controllerResult.create_default_results(req.body._id,req.body.technology);
              result_callback = responses.candidateAdded;
        }else{
-          result = responses.candidateExist;  
+         result_callback = responses.candidateExist;  
        }
-       res.send(result);
+       res.send(result_callback);
     }catch{
       res.status(403).send(responses.invalid);
      }
+   });
+   app.post('/candidate/next_question',async(req,res)=>{
+      try{
+         await auth.token(req)
+         console.log('body' + req.body)
+
+         var candidate = JSON.parse(req.body.candidate),
+             question  = JSON.parse(req.body.question),
+             pool_id   = req.body.pool_id,
+             result  =  await controllerResult.update_candidate_results(candidate,question,pool_id);
+             
+         res.status(200).send(result)
+      }catch(e){
+         console.log(e);
+         res.send(responses.genericError)
+      }
    });
    app.delete('/deleteCandidate',async(req,res)=>{
     try{
