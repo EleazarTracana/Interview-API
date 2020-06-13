@@ -50,13 +50,14 @@ module.exports = function(app){
          await auth.token(req)
          console.log('body' + req.body)
 
-         var candidate = req.body.candidate,
-             question  = req.body.question,
+         var candidate = JSON.parse(req.body.candidate),
+             question  = JSON.parse(req.body.question),
              pool_id   = req.body.pool_id,
              result  =  await controllerResult.update_candidate_results(candidate,question,pool_id);
              
          res.status(200).send(result)
       }catch(e){
+         console.log(e);
          res.send(responses.genericError)
       }
    });

@@ -25,21 +25,22 @@ module.exports= {
       var results_db = await client.results(),
           pool_db    = await client.tecnologies(),
           pool       = await pool_db.findOne({_id:poolid}),
-          results_cd = await results_db.findOne({candidate_id: candidate._id });
+          results_cd = await results_db.findOne({"candidate_id": candidate._id });
           results_cd.results.push(question);
-          await results_db.updateOne({candidate_id:candidate._id},{results: results_cd});
+          await results_db.updateOne({candidate_id:candidate._id},
+              {$set: {results: results_cd.results}});
 
-      var next_question  = await get_next_question(pool,results_cd);
+      var next_question  = await get_next_question(pool,results_cd.results);
       return next_question;
     }
   }
 async function get_next_question(pool,resultado){  
         current_sum_candidate = 0,
-        current_length_candidate = resultado.questions.length;
+        current_length_candidate = resultado.length;
 
         resultado.forEach(question => {current_sum_candidate += question.score})
         var current_value = Math.round(current_sum_candidate/current_length_candidate),
-            filtered_questions = pool.questions.filter(e => !resultado.questions.includes(e)),
+            filtered_questions = pool.questions.filter(e => !resultado.includes(e)),
             next_difficulty = GetNextDifficulty(current_value);
 
         var next_question = filtered_questions.find(e => e.difficulty == next_difficulty);
