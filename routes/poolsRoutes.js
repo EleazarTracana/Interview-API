@@ -1,5 +1,4 @@
-//Librerias 
-const controllerPools    = require('../controllers/POOLS');
+const controller_pools   = require('../controllers/POOLS');
 const responses          = require('../Modulos/constantes');
 const auth               = require('../base_de_datos/Autenticar');
  
@@ -8,18 +7,20 @@ module.exports = function(app){
   app.get('/technologies/dropdown',async (req,res) => {
     try{
         await auth.token(req)
-        var tecnologies = await controllerPools.technologies_dropdown_list()
+        var tecnologies = await controller_pools.technologies_dropdown_list()
         res.send(tecnologies);
     }catch{
       res.send(responses.invalid);
     }
   });
-  app.post('/pools/addQuestion',async (req,res) => {
+  app.get('/pools/question/add',async (req,res) => {
     try{
         await auth.token(req);
-        var pools = await controllerPools.poolAddQuestion(req.body.poolId, req.body.question);
+        let question = JSON.parse(req.body.question);
+        let pool_id  = req.body.poolId;
+        var pools = await controller_pools.poolAddQuestion(pool_id,question);
         res.send(pools);
-    }catch{
+    }catch (e){
       res.send(responses.invalid);
     }
   });
@@ -51,13 +52,13 @@ module.exports = function(app){
       array = [];
 
       if(tech != null && name != null){
-        pools = await controllerPools.poolTwoParams(name,tech);
+        pools = await controller_pools.poolTwoParams(name,tech);
       }else if(tech != null && name == null){
-        pools = await controllerPools.poolsBytechnology(tech);
+        pools = await controller_pools.poolsBytechnology(tech);
       }else if(tech == null && name !=null){
-        pools = await controllerPools.poolByName(name);
+        pools = await controller_pools.poolByName(name);
       }else{
-        pools = await controllerPools.poolsAll();
+        pools = await controller_pools.poolsAll();
       }
       if(pools instanceof Array){
         res.status(200).send(pools)
