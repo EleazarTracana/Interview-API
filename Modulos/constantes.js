@@ -25,11 +25,11 @@ module.exports = {
     upgrade(name){
         return "el desempeño del candidato ha sido muy bueno,cambiamos el seniority de la entrevista a "+name.toLowerCase(); 
     },
-    seniority_pool_empty(upgrade,downgrade){
+    seniority_pool_empty(upgrade){
         let message;
         if(upgrade){
             message = "bueno, pero no pudimos mejorar el seniority";
-        }else if(downgrade){
+        }else{
             message =  "bajo, pero no pudimos bajar el seniority";
         }
         message = "el desempeño del candidato ha sido muy "+message;

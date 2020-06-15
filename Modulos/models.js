@@ -17,11 +17,12 @@ module.exports = {
     }
   },
   Interview: class Interview{
-    constructor(changegrade,poolid,question,counter){
+    constructor(changegrade,poolid,question,counter, message){
       this.change_grade = changegrade;
       this.pool_id     = poolid;
       this.question  = question;
       this.counter   = counter;
+      this.message   = message;
     }
   }    
 }

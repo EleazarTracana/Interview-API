@@ -39,8 +39,8 @@ async function get_next_question(pool,pool_db,resultado){
         var current_value = Math.round(current_sum_candidate/current_length_candidate),
             counter = current_length_candidate + 1;
          
-        if(current_length_candidate = 3 && current_value == 2){
-          up_grade = true;
+        if(current_length_candidate == 3 && current_value <= 2){
+          down_grade = true;
           switch(pool.name){
             case enums.semisenior:
               new_pool = await pool_db.findOne({technology: pool.technology, name: enums.junior});
@@ -56,8 +56,8 @@ async function get_next_question(pool,pool_db,resultado){
               break;
           }
         }
-        if(current_length_candidate = 6 && current_value == 4){
-          down_grade = true;
+        if(current_length_candidate == 6 && current_value >= 4){
+          up_grade = true;
           switch(pool.name){
             case enums.semisenior:
               new_pool = await pool_db.findOne({technology: pool.technology, name: enums.senior});
@@ -75,7 +75,7 @@ async function get_next_question(pool,pool_db,resultado){
         }
         if(down_grade || up_grade){
           if(new_pool == null){
-              grade_message = enums.seniority_pool_empty(up_grade,down_grade);
+              grade_message = enums.seniority_pool_empty(up_grade);
               new_pool      = pool;
           }
         }else
@@ -95,7 +95,7 @@ async function get_next_question(pool,pool_db,resultado){
             }
           }
         }
-        let Interview_response = new Interview((down_grade || up_grade ),new_pool._id,next_question,counter)
+        let Interview_response = new Interview((down_grade || up_grade ),new_pool._id,next_question,counter,grade_message);
         return Interview_response;
 };
 var GetNextDifficulty = (total) => {
