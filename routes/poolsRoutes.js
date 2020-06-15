@@ -34,6 +34,24 @@ module.exports = function(app){
       res.send(responses.invalid);
     }
   });
+  app.post('/pools/deleteQuestion',async (req,res) => {
+    try{
+        await auth.token(req);
+        var pools = await controllerPools.poolDeleteQuestion(req.body.poolId, req.body.questionId);
+        res.send(pools);
+    }catch{
+      res.send(responses.invalid);
+    }
+  });
+  app.post('/pools/updateQuestion',async (req,res) => {
+    try{
+        await auth.token(req);
+        var pools = await controllerPools.poolUpdateQuestion(req.body.poolId, req.body.question);
+        res.send(pools);
+    }catch{
+      res.send(responses.invalid);
+    }
+  });
   app.get('/pools', async (req,res) =>{
     try{
 
