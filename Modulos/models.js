@@ -1,3 +1,5 @@
+const { down } = require("cli-color/move");
+
 module.exports = {
   message : class ResponseMessage{
     constructor(error,codigo,mensaje) {
@@ -12,6 +14,14 @@ module.exports = {
       this.candidate_id = dni,
       this.results = results
       this._id = pk
+    }
+  },
+  Interview: class Interview{
+    constructor(changegrade,poolid,question,counter){
+      this.change_grade = changegrade;
+      this.pool_id     = poolid;
+      this.question  = question;
+      this.counter   = counter;
     }
   }    
 }

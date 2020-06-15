@@ -1,6 +1,8 @@
 var client = require('../base_de_datos/Cliente'),
     candidate_functions = require('../controllers/CANDIDATES'),
-    results             = require('../Modulos/models').results;
+    results             = require('../Modulos/models').results,
+    Interview           = require('../Modulos/models').Interview,
+    enums               = require('../Modulos/constantes');
 
 module.exports = {
     create_default_results: async (dni,technology) => {
@@ -13,15 +15,6 @@ module.exports = {
         return callback;
     },
     update_candidate_results: async(candidate,question,poolid) => {
-      if(question._id == -1){
-       var  empty_question = {
-          description: 'se han acabado las preguntas de la pool',
-          score: 0,
-          difficulty: 0,
-          _id: -1
-        }
-        return empty_question;
-      }
       var results_db = await client.results(),
           pool_db    = await client.tecnologies(),
           pool       = await pool_db.findOne({_id:poolid}),
@@ -30,18 +23,66 @@ module.exports = {
           await results_db.updateOne({candidate_id:candidate._id},
               {$set: {results: results_cd.results}});
 
-      var next_question  = await get_next_question(pool,results_cd.results);
+      var next_question  = await get_next_question(pool,pool_db,results_cd.results);
       return next_question;
     }
   }
-async function get_next_question(pool,resultado){  
-        current_sum_candidate = 0,
-        current_length_candidate = resultado.length;
+async function get_next_question(pool,pool_db,resultado){  
+       var current_sum_candidate = 0,
+           current_length_candidate = resultado.length,
+           up_grade = false,
+           down_grade = false,
+           grade_message,
+           new_pool;
 
         resultado.forEach(question => {current_sum_candidate += question.score})
         var current_value = Math.round(current_sum_candidate/current_length_candidate),
-            filtered_questions = pool.questions.filter(e => !resultado.includes(e)),
-            next_difficulty = GetNextDifficulty(current_value);
+            counter = current_length_candidate + 1;
+         
+        if(current_length_candidate = 3 && current_value == 2){
+          up_grade = true;
+          switch(pool.name){
+            case enums.semisenior:
+              new_pool = await pool_db.findOne({technology: pool.technology, name: enums.junior});
+              grade_message = enums.downgrade(enums.junior);
+              break;
+            case enums.senior:
+              new_pool = await pool_db.findOne({technology: pool.technology, name: enums.semisenior});
+              grade_message = enums.downgrade(enums.semisenior);
+              break;
+            case enums.junior:
+              new_pool = pool;
+              grade_message = enums.downgrade_impossible;
+              break;
+          }
+        }
+        if(current_length_candidate = 6 && current_value == 4){
+          down_grade = true;
+          switch(pool.name){
+            case enums.semisenior:
+              new_pool = await pool_db.findOne({technology: pool.technology, name: enums.senior});
+              grade_message = enums.upgrade(enums.senior);
+              break;
+            case enums.junior:
+              new_pool = await pool_db.findOne({technology: pool.technology, name: enums.semisenior});
+              grade_message = enums.upgrade(enums.semisenior);
+              break;
+            case enums.senior:
+              new_pool = pool;
+              grade_message = enums.upgrade_impossible;
+              break;
+          }
+        }
+        if(down_grade || up_grade){
+          if(new_pool == null){
+              grade_message = enums.seniority_pool_empty(up_grade,down_grade);
+              new_pool      = pool;
+          }
+        }else
+          new_pool = pool;
+        
+        var filtered_questions = new_pool.questions.filter(e => !resultado.includes(e));
+        next_difficulty = GetNextDifficulty(current_value);
 
         var next_question = filtered_questions.find(e => e.difficulty == next_difficulty);
         if(next_question == null){
@@ -50,15 +91,14 @@ async function get_next_question(pool,resultado){
             next_question = {
               description: 'se han acabado las preguntas de la pool',
               score: 0,
-              difficulty: 0,
-              _id: -1
+              difficulty: 0
             }
           }
         }
-        return next_question;
+        let Interview_response = new Interview((down_grade || up_grade ),new_pool._id,next_question,counter)
+        return Interview_response;
 };
-var GetNextDifficulty = (total) =>{
-  console.log('total: ' + total);
+var GetNextDifficulty = (total) => {
     var next_value = 1;
     const highest_score = 5,
           highest_medium_score = 4,
@@ -75,6 +115,5 @@ var GetNextDifficulty = (total) =>{
           }else if(total == medium_slow_score){
             next_value  = slow_score;
           }
-          console.log('next_value: ' + total);
     return next_value;
 }

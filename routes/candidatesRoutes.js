@@ -1,4 +1,3 @@
-//Librerias 
 const controller_users    = require('../controllers/CANDIDATES');
 const controllerResult   = require('../controllers/RESULTS');
 const responses          = require('../Modulos/constantes');
@@ -61,7 +60,7 @@ module.exports = function(app){
              question  = JSON.parse(req.body.question),
              pool_id   = req.body.pool_id,
              result  =  await controllerResult.update_candidate_results(candidate,question,pool_id);
-             
+         
          res.status(200).send(result)
       }catch(e){
          console.log(e);
