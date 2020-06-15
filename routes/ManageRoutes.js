@@ -1,8 +1,6 @@
-//Librerias 
 const auth               = require('../base_de_datos/Autenticar');
 const controller         = require('../controllers/MANAGE.js');
 const constantes         = require('../Modulos/constantes.js');
-const { response } = require('express');
  
 module.exports = function(app){
     

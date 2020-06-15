@@ -59,7 +59,19 @@ module.exports = {
          var params = await client.params(),
              key    = await params.findOne({parameter_name:"API_PLACES_KEY"});
              return key;
+     },
+     question_difficulty_dropdown: async () => {
+        var params = await client.params(),
+            key    = await params.findOne({parameter_name: "DROPDOWN_DIFFICULTY"});
 
+        let min = key.parameter_value.min_difficulty,
+            max = key.parameter_value.max_difficulty,
+            array = [];
+
+            for(min ; min <= max; min++)
+                array.push(min);
+
+         return array;       
      }
     
 }

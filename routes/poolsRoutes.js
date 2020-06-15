@@ -1,4 +1,5 @@
 const controller_pools   = require('../controllers/POOLS');
+const controller_params  = require('../controllers/MANAGE');
 const responses          = require('../Modulos/constantes');
 const auth               = require('../base_de_datos/Autenticar');
  
@@ -13,13 +14,22 @@ module.exports = function(app){
       res.send(responses.invalid);
     }
   });
-  app.get('/pools/question/add',async (req,res) => {
+  app.get('/pools/questions/dropdown',async(req,res)=>{
+    try{
+      await auth.token(req);
+      var dropdown = await controller_params.question_difficulty_dropdown();
+      res.send(dropdown)
+    }catch(e){
+      res.send(responses.invalid);
+    }
+  });
+  app.post('/pools/question/add',async (req,res) => {
     try{
         await auth.token(req);
         let question = JSON.parse(req.body.question);
         let pool_id  = req.body.poolId;
-        var pools = await controller_pools.poolAddQuestion(pool_id,question);
-        res.send(pools);
+        await controller_pools.poolAddQuestion(pool_id,question);
+        res.send(responses.add_question_result);
     }catch (e){
       res.send(responses.invalid);
     }
