@@ -1,6 +1,8 @@
-var client = require('../base_de_datos/Cliente')
+var client = require('../base_de_datos/Cliente'),
+    lambda = require('lodash');
 const linkedinUriBase = "https://www.linkedin.com/in/"
 const githubUriBase = "https://github.com/";
+
 
 module.exports = {
     searchOne: async function search(id){
@@ -10,13 +12,28 @@ module.exports = {
         return  usuario;
     },
     searchAll : async function search(){
-        var candidates = await client.candidates(),
-        usuarios   = await candidates.find({}).toArray();
+        var candidates_db = await client.candidates(),
+            results_db    = await client.results(),
+            candidates    = await candidates_db.find({}).toArray(),
+            results       = await results_db.find({}).toArray();
         
-        if(usuarios != null && usuarios instanceof Array ){
-            usuarios.forEach(value => this.InsertLinks(value))
+        if(candidates != null)
+            candidates.forEach(value => this.InsertLinks(value));
+
+        for(var cand in candidates){
+            result_cand = results.find( x => x.candidate_id == cand._id);
+            if(result_cand.finished){
+                cand.finished = true;
+                cand.pending  = false;
+            }else if(result_cand.results > 0 && !result_cand.finished){
+                cand.finished = false;
+                cand.pending  = true;
+            }else if(result_cand.results == 0 && !result_cand.finished){
+                cand.finished = false;
+                cand.pending  = false;
+            }
         }
-        return usuarios;
+        return candidates;
     },
     addCandidate: async function add(candidate){
         var candidates = await client.candidates();
