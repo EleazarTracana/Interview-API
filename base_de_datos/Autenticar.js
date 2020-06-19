@@ -5,14 +5,14 @@ const config        = require('../config');
 
 module.exports = (db) => {
   var client = require('../base_de_datos/Cliente')(db),
-      module = {}
+      module = {};
     module.createtoken = () => {
         var secure = module.Random(0,999999);
         var token  = jwt.sign({Seguridad:secure},config.secret)
         return token;
     };
     module.validate = async (_username,password) =>{ 
-        var users_db = client.users();
+        var users_db = client.users(),
             user     = await users_db.findOne({username: _username}),
             result;
         if(user == null){
