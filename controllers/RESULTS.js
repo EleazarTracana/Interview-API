@@ -7,6 +7,11 @@ module.exports = (db) => {
       enums               = require('../Modulos/constantes'),
       module              = {};
 
+    module.get_candidate_results = async (dni) => {
+      var results_db = client.results(),
+          candidate_results = await results_db.findOne({"candidate_id": dni });
+          return candidate_results;
+    };
     module.create_default_results = async (dni,technology) => {
         var results_db = client.results(),
             next_pk = await client.getNextSequence("resultsid"),

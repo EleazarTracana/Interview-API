@@ -50,7 +50,8 @@ module.exports = function(app,db){
    app.post('/user/update',async(req,res) => {
       try{
          await auth.token(req)
-         var result
+         await controller_users.user_update(req.body,req.body.password)
+         res.send(responses.user_update);
       }catch(e){
          res.send(responses.invalid)
       }

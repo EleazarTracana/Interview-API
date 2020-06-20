@@ -16,6 +16,7 @@ module.exports = {
     add_question_result: new message(false,"200","la pregunta se ha dado de alta exitosamente"),
     pool_added: new message(false,"200","la pool se ha dado de alta exitosamente"),
     pool_founded: new message(true,"200","la pool no pudo darse de alta, ya existe"),
+    user_update: new message(false,"200","Usuario editado correctamente"),
     downgrade_impossible: "el desempeño del candidato es muy bajo",
     upgrade_impossible: "el desempeño del candidato es muy bueno",
     junior: "JUNIOR",

@@ -54,6 +54,16 @@ module.exports = function(app,db){
       res.status(403).send(responses.invalid);
      }
    });
+   app.get("/candidate/results",async(req,res)=>{
+      try{
+         await auth.token(req)
+         var dni = req.query.DNI,
+             results = controller_result.get_candidate_results(dni);
+             res.send(results);
+      }catch(e){
+         res.send(responses.invalid)
+      }
+   });
    app.post("/candidate/edit",async(req,res)=>{
       try{
          await auth.token(req);
