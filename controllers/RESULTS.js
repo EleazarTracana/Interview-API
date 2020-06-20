@@ -9,7 +9,7 @@ module.exports = (db) => {
 
     module.get_candidate_results = async (dni) => {
       var results_db = client.results(),
-          candidate_results = await results_db.findOne({"candidate_id": dni });
+          candidate_results = await results_db.findOne({"candidate_id": parseInt(dni) });
           return candidate_results;
     };
     module.create_default_results = async (dni,technology) => {

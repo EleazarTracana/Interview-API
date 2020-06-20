@@ -58,7 +58,7 @@ module.exports = function(app,db){
       try{
          await auth.token(req)
          var dni = req.query.DNI,
-             results = controller_result.get_candidate_results(dni);
+             results = await controller_result.get_candidate_results(dni);
              res.send(results);
       }catch(e){
          res.send(responses.invalid)
