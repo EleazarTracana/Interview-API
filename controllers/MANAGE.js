@@ -27,7 +27,9 @@ module.exports = (db) => {
                                    .replace("PH_CANDIDATE_NAME",model.candidate_name)
                                    .replace("PH_SCORE",model.final_score)
                                    .replace("PH_COUNT_QUESTION",model.count)
-                                   .replace("PH_QR_CODE",base_64_QR);
+                                   .replace("PH_QR_CODE",base_64_QR)
+                                   .replace("PH_DATE", new Date().toDateString())
+                                   .replace("PH_BIRTHDATE",model.candidate_age);
                  
                  return results;
          
@@ -100,7 +102,7 @@ module.exports = (db) => {
         var transporter = await create_email(),
             params      = client.params(),
             _email      = await params.findOne({ parameter_name: "EMAIL_ACCOUNT"}),
-            base_64_QR  = await module.generate_qrcode(result_model.DNI),
+            base_64_QR  = "",//await module.generate_qrcode(result_model.DNI),
             body        =  read_html_results(result_model,base_64_QR),
             info      = await transporter.sendMail({
                 from: _email.parameter_value,

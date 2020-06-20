@@ -166,7 +166,7 @@ module.finish_interview =  async function finish_interview(DNI,name_interviewer)
             final_score: count_result,
             technology: tech,
             pool: cand_result.seniority,
-            interviewer: name_interv,
+            interviewer: name_interviewer,
             count: question_count
           }  
      return await manage.sendEmail__results(candidate.email,model_mail);
