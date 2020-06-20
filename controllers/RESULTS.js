@@ -132,10 +132,12 @@ module.exports = (db) => {
          }
    return next_value;
   }
-  async function finish_interview(DNI,candidate_db,results_db,pool_name,name_interv){
-    var candidate  =  await candidate_db.findOne({_id:DNI}),
-        cand_result = await results_db.findOne({ "candidate_id" : DNI });
-          await results_db.updateOne({ "candidate_id" : DNI },{$set: {finished: true}});
+module.finish_interview =  async function finish_interview(DNI,name_interviewer){
+    var candidate_db = client.candidates(),
+        results_db   = client.results(),
+        candidate    = await candidate_db.findOne({_id:DNI}),
+        cand_result  = await results_db.findOne({ "candidate_id" : DNI });
+          await results_db.updateOne({ "candidate_id" : DNI },{$set: {finished: true, interviewer:name_interviewer}});
 
           var full_score     = 0,
               question_count = cand_result.results.length;
@@ -146,12 +148,26 @@ module.exports = (db) => {
               count_result = count_total.toString()+"/"+full_score.toString();
 
           var model_mail = {
-            technology: tech,
-            pool: pool_name,
+            DNI: candidate._id,
+            candidate_name: candidate.name,
+            candidate_age: getAge(candidate.birthday),
             final_score: count_result,
-            interviewer: name_interv
+            technology: tech,
+            pool: cand_result.seniority,
+            interviewer: name_interv,
+            count: question_count
           }  
      return await manage.sendEmail__results(candidate.email,model_mail);
+}
+function getAge(dateString) {
+  var today = new Date();
+  var birthDate = new Date(dateString);
+  var age = today.getFullYear() - birthDate.getFullYear();
+  var m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+  }
+  return age;
 }
 
   return module;

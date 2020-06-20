@@ -1,5 +1,6 @@
-const nodemailer = require("nodemailer");
-const fs = require('fs');
+const nodemailer = require("nodemailer"),
+fs = require('fs'),
+qrcode   = require('qrcode');
 
 module.exports = (db) => {
     var client = require('../base_de_datos/Cliente.js')(db),
@@ -18,13 +19,15 @@ module.exports = (db) => {
                                           .replace('PH_PASSWORD',password);
               return credentials;
          }
-         function read_html_results(model){
+         function read_html_results(model,base_64_QR){
              var results =  fs.readFileSync('C:/InterviewAPI/templates/resultados.html', 'utf8'),
                  results =  results.replace("PH_TECHNOLOGY",model.technology)
                                    .replace("PH_NAME_POOL",model.pool)
                                    .replace("PH_INTERVIEWER",model.interviewer)
-                                   .replace("PH_DESEMP",model.rating)
-                                   .replace("PH_SCORE",model.final_score);
+                                   .replace("PH_CANDIDATE_NAME",model.candidate_name)
+                                   .replace("PH_SCORE",model.final_score)
+                                   .replace("PH_COUNT_QUESTION",model.count)
+                                   .replace("PH_QR_CODE",base_64_QR);
                  
                  return results;
          
@@ -53,6 +56,14 @@ module.exports = (db) => {
         var allparams  = client.params(),
             params = allparams.find({}).toArray();
         return params;
+     };
+     module.generate_qrcode = async (DNI) => {
+        var params_db = client.params(),
+            param_method  = await params_db.findOne({ parameter_name: "QR_METHOD"}),
+            full_method   = param_method.parameter_value + DNI,
+            base_64_QR    = await qrcode.toDataURL(full_method);
+
+            return base_64_QR;
      };
      module.all_permissions = async () => {
         var permissions_db  =  client.permisos(),
@@ -89,7 +100,8 @@ module.exports = (db) => {
         var transporter = await create_email(),
             params      = client.params(),
             _email      = await params.findOne({ parameter_name: "EMAIL_ACCOUNT"}),
-            body        =  read_html_results(username,password),
+            base_64_QR  = await module.generate_qrcode(result_model.DNI),
+            body        =  read_html_results(result_model,base_64_QR),
             info      = await transporter.sendMail({
                 from: _email.parameter_value,
                 to: email_receiver , 

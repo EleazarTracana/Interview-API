@@ -1,5 +1,6 @@
 const linkedinUriBase = "https://www.linkedin.com/in/"
 const githubUriBase = "https://github.com/";
+const hackerrankUriBase = "https://www.hackerrank.com/"
 
 
 module.exports = (db) => {
@@ -58,6 +59,8 @@ module.exports = (db) => {
                 usuario.github = githubUriBase + usuario.github;
             if(usuario.linkedin != "")
                 usuario.linkedin = linkedinUriBase + usuario.linkedin;   
+            if(usuario.hackerrank != "")
+            usuario.hackerrank = hackerrankUriBase + usuario.linkedin;
         }
         return usuario;
     }

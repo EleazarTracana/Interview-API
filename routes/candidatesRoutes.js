@@ -1,6 +1,6 @@
 module.exports = function(app,db){
    const controller_users   = require('../controllers/CANDIDATES')(db),
-         controllerResult   = require('../controllers/RESULTS')(db),
+         controller_result   = require('../controllers/RESULTS')(db),
          responses          = require('../Modulos/constantes'),
          auth               = require('../base_de_datos/Autenticar')(db);
  
@@ -28,6 +28,15 @@ module.exports = function(app,db){
          res.status(403).send(responses.invalid);
        }
    });
+   app.post('/candidate/finishInterview',async (req,res) => {
+      try{
+         await auth.token(req)
+         var result = controller_result.finish_interview(req.body.DNI,req.body.Interviewer);
+         res.send(result)
+      }catch(e){
+         res.send(responses.invalid)
+      }
+   });
    app.post('/candidate/add', async (req,res) =>{
     try{
        await auth.token(req)
@@ -35,7 +44,7 @@ module.exports = function(app,db){
        var candidate = await controller_users.searchOne(req.body._id)
        if(!candidate){
              await controller_users.addCandidate(req.body)
-             await controllerResult.create_default_results(req.body._id,req.body.technology);
+             await controller_result.create_default_results(req.body._id,req.body.technology);
              result_callback = responses.candidateAdded;
        }else{
          result_callback = responses.candidateExist;  
@@ -54,7 +63,6 @@ module.exports = function(app,db){
          res.status(403).send(responses.invalid)
       }
    });
-
    app.post('/candidate/next_question',async(req,res)=>{
       try{
          await auth.token(req)
@@ -88,7 +96,7 @@ module.exports = function(app,db){
    app.post('/updateResults',async(req, res) =>{
       try{
         await auth.token(req)
-        var result = await controllerResult.update_results(req.body.candidate, req.body.question)
+        var result = await controller_result.update_results(req.body.candidate, req.body.question)
         
         res.send(responses.resultAdded);
       }catch{
