@@ -7,6 +7,7 @@ module.exports = function(app,db){
   app.get('/user/all',async (req,res) => {
       try{
           await auth.token(req);
+         // await auth.permissions("user_list",req);
           var users = await controller_users.searchAll()
           res.send(users);
       }catch (e){

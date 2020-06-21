@@ -13,9 +13,17 @@ module.exports = (db) => {
           return candidate_results;
     };
     module.get_all_results = async()=>{
-      var results_db = client.results(),
-          results = await results_db.find({}).toArray();
-      return results;
+      var candidates_db  = client.candidates(),
+          results_db = client.results(),
+          all_candidates = await candidates_db.find({}).toArray(),
+          candidate_with_results = [];
+          all_candidates.forEach( candidate =>{
+            let result  = await results_db.findOne({candidate_id: candidate._id});
+            candidate.results = result;
+            candidate_with_results.push(candidate);
+          })
+
+      return candidate_with_results;
     }
     module.create_default_results = async (dni,technology) => {
         var results_db = client.results(),

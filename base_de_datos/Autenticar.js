@@ -29,15 +29,18 @@ module.exports = (db) => {
           await params_db.updateOne({parameter_name:"TOKEN_BLACKLIST"},
                                          {$addToSet: {parameter_value: token }});
     };
-    module.check_function = async (functionName,userid,permiso) => {
+    module.check_function = async (functionName,permiso) => {
       var permissions_db   = client.permisos(),
           user_permissions = await permissions_db.findOne({name: permiso}),
           user_function    =  user_permissions.functions.filter(e => e.name == functionName);
           return (user_function == null) ? false : user_function.allow;
     }
-    module.permissions    = async (functionName,userid,req,permiso) => {
+    module.permissions    = async (functionName,req) => {
+          var user_db   = client.user(),
+              userid    = parseInt(req.query.userid),
+              user      = await user_db.findOne({_id:userid})
           await module.check_blacklist(req);
-          var checked = await check_function(functionName,userid,permiso);
+          var checked = await check_function(functionName,user.name_permissions);
           if(!checked){
               await module.insert_blacklist(req);
               throw Error("Permissions has been revoke");

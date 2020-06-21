@@ -6,7 +6,7 @@ module.exports = (db) => {
     module.searchOne = async (username) => {
         var users =  client.users(),
             permissions_db = client.permisos(),
-        var usuario    = await users.findOne({"username": username});
+            usuario    = await users.findOne({"username": username});
             if(usuario){
                 usuario.permissions = await permissions_db.findOne({name: usuario.name_permissions})
             }
