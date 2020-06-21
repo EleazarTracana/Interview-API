@@ -15,7 +15,7 @@ module.exports = (db) => {
     module.get_all_results = async()=>{
       var candidates_db  = client.candidates(),
           results_db = client.results(),
-          all_candidates = await candidates_db.find({}).toArray(),
+          all_candidates = await candidates_db.find({}).toArray();
 
           for(var candidate in all_candidates){
             let result  = await results_db.findOne({candidate_id: candidate._id});
