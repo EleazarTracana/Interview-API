@@ -1,6 +1,7 @@
 const responses     = require('../Modulos/constantes');
 const jwt           = require('jsonwebtoken');
 const config        = require('../config');
+const { black } = require('cli-color');
 
 
 module.exports = (db) => {
@@ -11,15 +12,49 @@ module.exports = (db) => {
         var token  = jwt.sign({Seguridad:secure},config.secret)
         return token;
     };
+    module.check_blacklist = async (req) => {
+        var token = req.headers['authorization'],
+            params_db  = client.params(),
+            param      = await params_db.findOne({parameter_name: "TOKEN_BLACKLIST"}),
+            blacklist  = param.parameter_value;
+
+            blacklist.array.forEach(element => {
+              if(token.equals(element))
+                throw Error("Invalid Token")
+            });            
+    };
+    module.insert_blacklist = async (req) =>{
+      var token = req.headers['authorization'],
+          params_db  = client.params();
+          await params_db.updateOne({parameter_name:"TOKEN_BLACKLIST"},
+                                         {$addToSet: {parameter_value: token }});
+    };
+    module.check_function = async (functionName,userid,permiso) => {
+      var permissions_db   = client.permisos(),
+          user_permissions = await permissions_db.findOne({name: permiso}),
+          user_function    =  user_permissions.functions.filter(e => e.name == functionName);
+          return (user_function == null) ? false : user_function.allow;
+    }
+    module.permissions    = async (functionName,userid,req,permiso) => {
+          await module.check_blacklist(req);
+          var checked = await check_function(functionName,userid,permiso);
+          if(!checked){
+              await module.insert_blacklist(req);
+              throw Error("Permissions has been revoke");
+          }
+    };
     module.validate = async (_username,password) =>{ 
         var users_db = client.users(),
             user     = await users_db.findOne({username: _username}),
+            permissions_db = client.permisos(),
             result;
         if(user == null){
               result = responses.userNotFound
         }else{
            if(user.password == password){
              user.token = module.createtoken();
+             var permiso = await permissions_db.findOne({name: user.name_permissions});
+                 user.permissions = permiso;
              result = user;
            }else{
              result = responses.incorrect;

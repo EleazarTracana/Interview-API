@@ -4,19 +4,25 @@ module.exports = (db) => {
         module = {};
     
     module.searchOne = async (username) => {
-        var users =  client.users();
+        var users =  client.users(),
+            permissions_db = client.permisos(),
         var usuario    = await users.findOne({"username": username});
+            if(usuario){
+                usuario.permissions = await permissions_db.findOne({name: usuario.name_permissions})
+            }
         return  usuario;
     };
     module.searchAll = async () => {
-        var users =  client.users();
-        var usuarios   = await users.find({}).toArray();
+        var users =  client.users(),
+            usuarios   = await users.find({}).toArray();
         return usuarios;
     };
     module.addUser = async (user) => {
-        var users   =  client.users(),
-            nextPk = await client.getNextSequence("userid");
-        user._id = nextPk;
+        var users    =  client.users(),
+            nextPk   =  await client.getNextSequence("userid");
+            user._id =  nextPk;
+            delete user.permissions;
+            user.name_permissions = user.permissions.name;
         var resultado  = await users.insertOne(user);
         return resultado;
     };
