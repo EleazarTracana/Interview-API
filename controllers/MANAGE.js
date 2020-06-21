@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer"),
-fs = require('fs');
-//qrcode   = require('qrcode').
+fs = require('fs'),
+QR_CODE   = require('qrcode'),
+pdf = require('html-pdf');
 
 module.exports = (db) => {
     var client = require('../base_de_datos/Cliente.js')(db),
@@ -54,16 +55,25 @@ module.exports = (db) => {
               return transporter;
          }    
 
-    module.GetAll = async () => {
+     module.GetAll = async () => {
         var allparams  = client.params(),
             params = allparams.find({}).toArray();
         return params;
+     };
+     module.downloadPDF = async (DNI) =>{
+        var html    = fs.readFileSync('C:/InterviewAPI/templates/credenciales.html', 'utf8');
+        const stream = await new Promise((resolve, reject) => {
+                    pdf.create(html).toStream((err, stream) => {resolve(stream)});
+          });
+
+        return stream;
+    
      };
      module.generate_qrcode = async (DNI) => {
         var params_db = client.params(),
             param_method  = await params_db.findOne({ parameter_name: "QR_METHOD"}),
             full_method   = param_method.parameter_value + DNI,
-            base_64_QR    = ""//await qrcode.toDataURL(full_method);
+            base_64_QR    = await QR_CODE.toDataURL(full_method);
 
             return base_64_QR;
      };
@@ -102,7 +112,7 @@ module.exports = (db) => {
         var transporter = await create_email(),
             params      = client.params(),
             _email      = await params.findOne({ parameter_name: "EMAIL_ACCOUNT"}),
-            base_64_QR  = "",//await module.generate_qrcode(result_model.DNI),
+            base_64_QR  = await module.generate_qrcode(result_model.DNI),
             body        =  read_html_results(result_model,base_64_QR),
             info      = await transporter.sendMail({
                 from: _email.parameter_value,

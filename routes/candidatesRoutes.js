@@ -1,6 +1,7 @@
 module.exports = function(app,db){
    const controller_users   = require('../controllers/CANDIDATES')(db),
-         controller_result   = require('../controllers/RESULTS')(db),
+         controller_result  = require('../controllers/RESULTS')(db),
+         controller_manage  = require('../controllers/MANAGE')(db),
          responses          = require('../Modulos/constantes'),
          auth               = require('../base_de_datos/Autenticar')(db);
  
@@ -72,6 +73,7 @@ module.exports = function(app,db){
              result_candidate.results.forEach(question => full_score += question.score)
              result_candidate.full_score = full_score;
              result_candidate.count = result_candidate.results.length;
+             result_candidate.QRCODE = await controller_manage.generate_qrcode(dni);
              res.send(result_candidate);
       }catch(e){
          res.send(responses.invalid)
