@@ -18,8 +18,8 @@ module.exports = (db) => {
           all_candidates = await candidates_db.find({}).toArray();
 
           for(var i = 0; i < all_candidates.length; i++){
-            let result  = await results_db.findOne({candidate_id:  candidate[i]._id});
-            candidate[i].results = result;
+            let result  = await results_db.findOne({candidate_id:  all_candidates[i]._id});
+            all_candidates[i].results = result;
           }
          return all_candidates;
     }

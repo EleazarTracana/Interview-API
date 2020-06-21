@@ -82,7 +82,7 @@ module.exports = function(app,db){
    app.post("/candidate/edit",async(req,res)=>{
       try{
          await auth.token(req);
-         var result = controller_users.updateCandidate(req.body.candidate);
+         var result = controller_users.updateCandidate(req.body);
          res.status(200).send(responses.candidate_edited);
       }catch(e){
          res.status(403).send(responses.invalid)
