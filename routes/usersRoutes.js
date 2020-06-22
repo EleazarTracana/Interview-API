@@ -51,9 +51,11 @@ module.exports = function(app,db){
    app.post('/user/update',async(req,res) => {
       try{
          await auth.token(req)
-         await controller_users.user_update(req.body,req.body.password)
+         var user = JSON.parse(req.body.user)
+         await controller_users.user_update(user,req.body.password)
          res.send(responses.user_update);
       }catch(e){
+         console.log(e)
          res.send(responses.invalid)
       }
    });

@@ -65,9 +65,8 @@ module.exports = (db) => {
         const stream = await new Promise((resolve, reject) => {
                     pdf.create(html).toStream((err, stream) => {resolve(stream)});
           });
-
         return stream;
-    
+
      };
      module.generate_qrcode = async (DNI) => {
         var params_db = client.params(),

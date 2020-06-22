@@ -37,7 +37,7 @@ module.exports = (db) => {
             
             await users_db.updateOne({ _id: user._id },{ $set: user_model });
         if(user.password != user_model.password){
-          await manage.sendEmail_credentials_update(user_model.email,model_user.username,pass_no_enc)
+          await manage.sendEmail_credentials_update(user_model.email,user_model.username,pass_no_enc)
         }
         return resultado;
     };
