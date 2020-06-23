@@ -165,9 +165,11 @@ module.exports = (db) => {
          }
    return next_value;
   }
-module.finish_interview =  async function finish_interview(DNI,name_interviewer){
+module.finish_interview =  async function finish_interview(DNI,name_interviewer,userid){
     var candidate_db = client.candidates(),
         results_db   = client.results(),
+        users_db     = client.users(),
+        user         = await users_db.findOne({_id:userid}),
         candidate    = await candidate_db.findOne({_id:DNI}),
         cand_result  = await results_db.findOne({ "candidate_id" : DNI });
           await results_db.updateOne({ "candidate_id" : DNI },{$set: {finished: true, interviewer:name_interviewer}});
@@ -190,7 +192,7 @@ module.finish_interview =  async function finish_interview(DNI,name_interviewer)
             interviewer: name_interviewer,
             count: question_count
           }  
-     return await manage.sendEmail__results(candidate.email,model_mail);
+     return await manage.sendEmail__results(user,model_mail);
 }
 function getAge(dateString) {
   var today = new Date();

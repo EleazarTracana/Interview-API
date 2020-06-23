@@ -32,7 +32,8 @@ module.exports = function(app,db){
    app.post('/candidate/finishInterview',async (req,res) => {
       try{
          await auth.token(req)
-         var result = controller_result.finish_interview(req.body.DNI,req.body.Interviewer);
+         var userid    = parseInt(req.headers['userid']),
+         var result = controller_result.finish_interview(req.body.DNI,req.body.Interviewer,userid);
          res.send(result)
       }catch(e){
          res.send(responses.invalid)
