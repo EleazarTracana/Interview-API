@@ -33,7 +33,7 @@ module.exports = function(app,db){
       try{
          await auth.token(req)
          var userid    = parseInt(req.headers['userid']),
-         var result = controller_result.finish_interview(req.body.DNI,req.body.Interviewer,userid);
+             result = controller_result.finish_interview(req.body.DNI,req.body.Interviewer,userid);
          res.send(result)
       }catch(e){
          res.send(responses.invalid)
